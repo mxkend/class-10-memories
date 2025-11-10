@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>烟台四中2022级10班回忆录</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* 原有样式保持不变 */
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .media-card { height: 200px; object-fit: cover; }
+        .media-viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; display: none; }
+        .media-content { max-width: 90%; max-height: 90%; margin: 20px auto; display: block; }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 30px; color: white; cursor: pointer; }
+        .media-info { position: absolute; bottom: 20px; left: 20px; color: white; background-color: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; }
+        .comment-form { display: none; }
+        .reply-form { display: none; }
+        .comment-replies { display: none; }
+        .btn-primary { background-color: #dc3545; border-color: #dc3545; }
+        .btn-primary:hover { background-color: #c82333; border-color: #bd2130; }
+        .btn-outline-primary { color: #dc3545; border-color: #dc3545; }
+        .btn-outline-primary:hover { background-color: #dc3545; color: white; }
+        .badge-primary { background-color: #dc3545; }
+        .nav-link.active { color: #dc3545 !important; border-bottom: 2px solid #dc3545; }
+        .media-viewer { display: none; }
+        .media-viewer.active { display: block; }
+        .media-viewer video { max-width: 90%; max-height: 90%; margin: 20px auto; display: block; }
+        .media-viewer img { max-width: 90%; max-height: 90%; margin: 20px auto; display: block; }
+        @media (max-width: 768px) {
+            .media-card { height: 150px; }
+            .media-viewer img, .media-viewer video { max-width: 100%; max-height: 100%; }
+            .media-info { width: 90%; box-sizing: border-box; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h3 class="card-title mb-0">烟台四中2022级10班回忆录</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info" role="alert">
+                            欢迎来到我们的班级回忆录！在这里，你可以分享你的青春记忆，上传珍贵的照片和视频，留下你想对同学们说的话。
+                        </div>
+                        
+                        <!-- 登录弹窗 -->
+                        <div id="loginModal" class="modal fade" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title">请输入你的姓名</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="loginForm">
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label">姓名</label>
+                                                <input type="text" class="form-control" id="username" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="adminPassword" class="form-label">管理员密码（可选）</label>
+                                                <input type="password" class="form-control" id="adminPassword" placeholder="输入密码以获得管理员权限">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" id="loginBtn">登录</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 用户信息 -->
+                        <div id="userInfo" class="d-flex justify-content-between align-items-center mb-4" style="display: none;">
+                            <div>
+                                <span class="fw-bold">欢迎，</span>
+                                <span id="userName"></span>
+                                <span id="adminBadge" class="badge bg-danger ms-2" style="display: none;">管理员</span>
+                            </div>
+                            <button id="logoutBtn" class="btn btn-sm btn-outline-danger">退出</button>
+                        </div>
+                        
+                        <!-- 标签页导航 -->
+                        <ul class="nav nav-tabs mb-4">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#memories">青春记忆</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#media">媒体专区</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#freeTalk">自由发言</a>
+                            </li>
+                        </ul>
+                        
+                        <!-- 标签页内容 -->
+                        <div class="tab-content">
+                            <!-- 青春记忆 -->
+                            <div id="memories" class="tab-pane active">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">入学印象</div>
+                                            <div class="card-body">
+                                                <p class="card-text">刚踏入四中校门的那一刻，你对校园的第一印象是什么？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="1">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="1"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">难忘的老师</div>
+                                            <div class="card-body">
+                                                <p class="card-text">哪位老师给你留下了最深刻的印象？为什么？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="2">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="2"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">班级活动</div>
+                                            <div class="card-body">
+                                                <p class="card-text">印象最深的一次班级活动是什么？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="3">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="3"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">校园美食</div>
+                                            <div class="card-body">
+                                                <p class="card-text">学校食堂或周边小吃中，你最喜欢哪一道？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="4">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="4"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">难忘的考试</div>
+                                            <div class="card-body">
+                                                <p class="card-text">最难忘的一次考试是什么？有什么故事？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="5">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="5"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">课间时光</div>
+                                            <div class="card-body">
+                                                <p class="card-text">课间十分钟，你通常会做什么？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="6">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="6"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">同学情谊</div>
+                                            <div class="card-body">
+                                                <p class="card-text">和哪位同学的友谊最让你珍惜？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="7">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="7"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">运动会</div>
+                                            <div class="card-body">
+                                                <p class="card-text">运动会上最难忘的瞬间是什么？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="8">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="8"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">毕业季</div>
+                                            <div class="card-body">
+                                                <p class="card-text">毕业时最想对同学和老师说的话是什么？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="9">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="9"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">校园美景</div>
+                                            <div class="card-body">
+                                                <p class="card-text">校园里你最喜欢的角落是哪里？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="10">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="10"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header bg-danger text-white">学习心得</div>
+                                            <div class="card-body">
+                                                <p class="card-text">有什么学习方法或技巧想分享给大家？</p>
+                                                <button class="btn btn-primary btn-sm add-comment" data-topic="11">添加评论</button>
+                                                <div class="comments-container mt-3" data-topic="11"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 媒体专区 -->
+                            <div id="media" class="tab-pane">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4>媒体专区</h4>
+                                    <button id="uploadMediaBtn" class="btn btn-primary btn-sm">上传媒体</button>
+                                </div>
+                                
+                                <!-- 上传媒体弹窗 -->
+                                <div id="uploadMediaModal" class="modal fade" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title">上传媒体</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="uploadMediaForm">
+                                                    <div class="mb-3">
+                                                        <label for="mediaFile" class="form-label">选择文件</label>
+                                                        <input type="file" class="form-control" id="mediaFile" accept="image/*,video/*" required>
+                                                        <small class="form-text text-muted">支持图片(JPG, PNG)和视频(MP4, WEBM)，最大10MB</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="mediaDescription" class="form-label">描述</label>
+                                                        <textarea class="form-control" id="mediaDescription" rows="3" placeholder="分享一下这张照片/视频的故事"></textarea>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                                <button type="button" class="btn btn-danger" id="confirmUploadBtn">确认上传</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 媒体列表 -->
+                                <div id="mediaList" class="row g-3"></div>
+                            </div>
+                            
+                            <!-- 自由发言 -->
+                            <div id="freeTalk" class="tab-pane">
+                                <div class="card">
+                                    <div class="card-header bg-danger text-white">自由发言</div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="freeTalkContent" rows="3" placeholder="在这里写下你想对同学们说的话..."></textarea>
+                                        </div>
+                                        <button id="submitFreeTalkBtn" class="btn btn-primary">发布</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- 自由发言列表 -->
+                                <div id="freeTalkList" class="mt-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 媒体查看器 -->
+    <div id="mediaViewer" class="media-viewer">
+        <div class="close-btn" id="closeMediaViewer">×</div>
+        <div class="media-content" id="mediaViewerContent"></div>
+        <div class="media-info" id="mediaViewerInfo"></div>
+    </div>
+    
+    <!-- 评论表单模板 -->
+    <template id="commentFormTemplate">
+        <div class="comment-form mb-3">
+            <textarea class="form-control" rows="2" placeholder="分享你的想法..."></textarea>
+            <div class="d-flex justify-content-end mt-2">
+                <button class="btn btn-sm btn-outline-danger cancel-comment">取消</button>
+                <button class="btn btn-sm btn-danger save-comment ms-2">发布</button>
+            </div>
+        </div>
+    </template>
+    
+    <!-- 回复表单模板 -->
+    <template id="replyFormTemplate">
+        <div class="reply-form mb-3">
+            <textarea class="form-control" rows="2" placeholder="回复..."></textarea>
+            <div class="d-flex justify-content-end mt-2">
+                <button class="btn btn-sm btn-outline-danger cancel-reply">取消</button>
+                <button class="btn btn-sm btn-danger save-reply ms-2">回复</button>
+            </div>
+        </div>
+    </template>
+    
+    <!-- 评论模板 -->
+    <template id="commentTemplate">
+        <div class="comment bg-light p-3 rounded mb-3" data-comment-id="">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="fw-bold"></span>
+                    <span class="text-muted ms-2"></span>
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-danger reply-comment">回复</button>
+                    <button class="btn btn-outline-danger toggle-replies">查看回复</button>
+                    <button class="btn btn-outline-danger like-comment">
+                        <<i class="bi bi-heart"></</i>
+                        <span class="like-count">0</span>
+                    </button>
+                    <button class="btn btn-outline-danger edit-comment">编辑</button>
+                    <button class="btn btn-outline-danger delete-comment">删除</button>
+                </div>
+            </div>
+            <div class="mt-2 comment-content"></div>
+            <div class="comment-replies mt-2 pl-4 border-left border-danger"></div>
+        </div>
+    </template>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // 初始化Supabase
+        const supabaseUrl = 'https://gjdwuuqpjiddligazjwu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqZHd1d3FwampkZGxpZ2F6and1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQxNjQ4OTcsImV4cCI6MTkzMzk0MDg5N30.VdN004747a18287478748787487487487';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // 本地存储用户信息
+        let currentUser = JSON.parse(localStorage.getItem('class10MemoriesUser')) || null;
+        let isAdmin = localStorage.getItem('class10MemoriesAdmin') === 'true';
+        
+        // DOM元素
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        const uploadMediaModal = new bootstrap.Modal(document.getElementById('uploadMediaModal'));
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userName = document.getElementById('userName');
+        const adminBadge = document.getElementById('adminBadge');
+        const userInfo = document.getElementById('userInfo');
+        const addCommentBtns = document.querySelectorAll('.add-comment');
+        const commentFormTemplate = document.getElementById('commentFormTemplate');
+        const replyFormTemplate = document.getElementById('replyFormTemplate');
+        const commentTemplate = document.getElementById('commentTemplate');
+        const mediaViewer = document.getElementById('mediaViewer');
+        const mediaViewerContent = document.getElementById('mediaViewerContent');
+        const mediaViewerInfo = document.getElementById('mediaViewerInfo');
+        const closeMediaViewer = document.getElementById('closeMediaViewer');
+        const uploadMediaBtn = document.getElementById('uploadMediaBtn');
+        const confirmUploadBtn = document.getElementById('confirmUploadBtn');
+        const mediaFile = document.getElementById('mediaFile');
+        const mediaDescription = document.getElementById('mediaDescription');
+        const submitFreeTalkBtn = document.getElementById('submitFreeTalkBtn');
+        const freeTalkContent = document.getElementById('freeTalkContent');
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 显示登录弹窗（如果用户未登录）
+            if (!currentUser) {
+                loginModal.show();
+            } else {
+                updateUserInfo();
+                await loadComments();
+                await loadMedia();
+                await loadFreeTalks();
+            }
+            
+            // 绑定事件
+            loginBtn.addEventListener('click', handleLogin);
+            logoutBtn.addEventListener('click', handleLogout);
+            addCommentBtns.forEach(btn => btn.addEventListener('click', handleAddComment));
+            closeMediaViewer.addEventListener('click', () => mediaViewer.classList.remove('active'));
+            uploadMediaBtn.addEventListener('click', () => uploadMediaModal.show());
+            confirmUploadBtn.addEventListener('click', handleUploadMedia);
+            submitFreeTalkBtn.addEventListener('click', handleSubmitFreeTalk);
+            
+            // 点击媒体卡片查看大图
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.media-card')) {
+                    const mediaId = e.target.closest('.media-card').dataset.mediaId;
+                    viewMedia(mediaId);
+                }
+            });
+        });
+        
+        // 处理登录
+        async function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const adminPassword = document.getElementById('adminPassword').value;
+            
+            if (!username) {
+                alert('请输入姓名');
+                return;
+            }
+            
+            currentUser = { name: username };
+            isAdmin = adminPassword === 'admin123';
+            
+            // 保存到本地存储
+            localStorage.setItem('class10MemoriesUser', JSON.stringify(currentUser));
+            localStorage.setItem('class10MemoriesAdmin', isAdmin);
+            
+            loginModal.hide();
+            updateUserInfo();
+            await loadComments();
+            await loadMedia();
+            await loadFreeTalks();
+        }
+        
+        // 处理登出
+        function handleLogout() {
+            localStorage.removeItem('class10MemoriesUser');
+            localStorage.removeItem('class10MemoriesAdmin');
+            currentUser = null;
+            isAdmin = false;
+            updateUserInfo();
+            loginModal.show();
+        }
+        
+        // 更新用户信息显示
+        function updateUserInfo() {
+            if (currentUser) {
+                userName.textContent = currentUser.name;
+                adminBadge.style.display = isAdmin ? 'inline-block' : 'none';
+                userInfo.style.display = 'flex';
+            } else {
+                userInfo.style.display = 'none';
+            }
+        }
+        
+        // 处理添加评论
+        function handleAddComment(e) {
+            const topicId = e.target.dataset.topic;
+            const container = document.querySelector(`.comments-container[data-topic="${topicId}"]`);
+            
+            // 检查是否已有表单
+            if (container.querySelector('.comment-form')) {
+                return;
+            }
+            
+            // 克隆评论表单模板
+            const commentForm = commentFormTemplate.content.cloneNode(true);
+            const textarea = commentForm.querySelector('textarea');
+            const saveBtn = commentForm.querySelector('.save-comment');
+            const cancelBtn = commentForm.querySelector('.cancel-comment');
+            
+            // 绑定保存和取消事件
+            saveBtn.addEventListener('click', async () => {
+                const content = textarea.value.trim();
+                if (!content) return;
+                
+                try {
+                    const { data, error } = await supabase
+                        .from('comments')
+                        .insert([{
+                            topic_id: topicId,
+                            author: currentUser.name,
+                            content: content,
+                            level: 0
+                        }]);
+                    
+                    if (error) throw error;
+                    
+                    // 清空表单并重新加载评论
+                    textarea.value = '';
+                    await loadComments();
+                } catch (error) {
+                    console.error('添加评论失败:', error);
+                    alert('添加评论失败，请重试');
+                }
+            });
+            
+            cancelBtn.addEventListener('click', () => {
+                commentForm.remove();
+            });
+            
+            container.appendChild(commentForm);
+            textarea.focus();
+        }
+        
+        // 加载所有评论
+        async function loadComments() {
+            try {
+                const { data: comments, error } = await supabase
+                    .from('comments')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                // 按话题ID分组
+                const commentsByTopic = {};
+                comments.forEach(comment => {
+                    if (!commentsByTopic[comment.topic_id]) {
+                        commentsByTopic[comment.topic_id] = [];
+                    }
+                    commentsByTopic[comment.topic_id].push(comment);
+                });
+                
+                // 渲染每个话题的评论
+                document.querySelectorAll('.comments-container').forEach(container => {
+                    const topicId = container.dataset.topic;
+                    const topicComments = commentsByTopic[topicId] || [];
+                    
+                    container.innerHTML = '';
+                    
+                    topicComments.forEach(comment => {
+                        renderComment(container, comment);
+                    });
+                });
+            } catch (error) {
+                console.error('加载评论失败:', error);
+                alert('加载评论失败，请重试');
+            }
+        }
+        
+        // 渲染评论
+        function renderComment(container, comment) {
+            const commentEl = commentTemplate.content.cloneNode(true);
+            const commentDiv = commentEl.querySelector('.comment');
+            const authorEl = commentEl.querySelector('.fw-bold');
+            const timeEl = commentEl.querySelector('.text-muted');
+            const contentEl = commentEl.querySelector('.comment-content');
+            const likeCountEl = commentEl.querySelector('.like-count');
+            const repliesContainer = commentEl.querySelector('.comment-replies');
+            const replyBtn = commentEl.querySelector('.reply-comment');
+            const toggleRepliesBtn = commentEl.querySelector('.toggle-replies');
+            const likeBtn = commentEl.querySelector('.like-comment');
+            const editBtn = commentEl.querySelector('.edit-comment');
+            const deleteBtn = commentEl.querySelector('.delete-comment');
+            
+            // 设置评论数据
+            commentDiv.dataset.commentId = comment.id;
+            authorEl.textContent = comment.author;
+            timeEl.textContent = formatDate(comment.created_at);
+            contentEl.textContent = comment.content;
+            likeCountEl.textContent = comment.like_count || 0;
+            
+            // 检查是否已点赞
+            if (comment.is_liked) {
+                likeBtn.classList.add('text-danger');
+            }
+            
+            // 加载回复
+            async function loadReplies() {
+                try {
+                    const { data: replies, error } = await supabase
+                        .from('comments')
+                        .select('*')
+                        .eq('parent_id', comment.id)
+                        .order('created_at', { ascending: true });
+                    
+                    if (error) throw error;
+                    
+                    repliesContainer.innerHTML = '';
+                    replies.forEach(reply => {
+                        renderComment(repliesContainer, reply);
+                    });
+                    
+                    // 切换显示/隐藏
+                    if (replies.length > 0) {
+                        toggleRepliesBtn.textContent = repliesContainer.style.display === 'none' 
+                            ? '收起回复' 
+                            : '查看回复';
+                        repliesContainer.style.display = repliesContainer.style.display === 'none' 
+                            ? 'block' 
+                            : 'none';
+                    } else {
+                        toggleRepliesBtn.textContent = '暂无回复';
+                        toggleRepliesBtn.disabled = true;
+                    }
+                } catch (error) {
+                    console.error('加载回复失败:', error);
+                    alert('加载回复失败，请重试');
+                }
+            }
+            
+            // 绑定事件
+            replyBtn.addEventListener('click', () => {
+                // 检查是否已有回复表单
+                if (repliesContainer.querySelector('.reply-form')) {
+                    return;
+                }
+                
+                // 克隆回复表单模板
+                const replyForm = replyFormTemplate.content.cloneNode(true);
+                const textarea = replyForm.querySelector('textarea');
+                const saveBtn = replyForm.querySelector('.save-reply');
+                const cancelBtn = replyForm.querySelector('.cancel-reply');
+                
+                // 绑定保存和取消事件
+                saveBtn.addEventListener('click', async () => {
+                    const content = textarea.value.trim();
+                    if (!content) return;
+                    
+                    try {
+                        const { data, error } = await supabase
+                            .from('comments')
+                            .insert([{
+                                topic_id: comment.topic_id,
+                                author: currentUser.name,
+                                content: content,
+                                parent_id: comment.id,
+                                level: comment.level + 1
+                            }]);
+                        
+                        if (error) throw error;
+                        
+                        // 清空表单并重新加载回复
+                        textarea.value = '';
+                        await loadReplies();
+                    } catch (error) {
+                        console.error('添加回复失败:', error);
+                        alert('添加回复失败，请重试');
+                    }
+                });
+                
+                cancelBtn.addEventListener('click', () => {
+                    replyForm.remove();
+                });
+                
+                repliesContainer.appendChild(replyForm);
+                textarea.focus();
+            });
+            
+            toggleRepliesBtn.addEventListener('click', loadReplies);
+            
+            likeBtn.addEventListener('click', async () => {
+                try {
+                    let newLikeCount = comment.like_count || 0;
+                    let newIsLiked = !comment.is_liked;
+                    
+                    if (newIsLiked) {
+                        newLikeCount += 1;
+                    } else {
+                        newLikeCount -= 1;
+                    }
+                    
+                    const { data, error } = await supabase
+                        .from('comments')
+                        .update({
+                            like_count: newLikeCount,
+                            is_liked: newIsLiked
+                        })
+                        .eq('id', comment.id);
+                    
+                    if (error) throw error;
+                    
+                    // 更新UI
+                    likeCountEl.textContent = newLikeCount;
+                    likeBtn.classList.toggle('text-danger', newIsLiked);
+                    
+                    // 更新评论对象
+                    comment.like_count = newLikeCount;
+                    comment.is_liked = newIsLiked;
+                } catch (error) {
+                    console.error('点赞失败:', error);
+                    alert('点赞失败，请重试');
+                }
+            });
+            
+            editBtn.addEventListener('click', async () => {
+                // 检查是否为作者或管理员
+                if (comment.author !== currentUser.name && !isAdmin) {
+                    alert('你没有权限编辑此评论');
+                    return;
+                }
+                
+                // 创建编辑表单
+                const editForm = document.createElement('div');
+                editForm.className = 'edit-form mb-2';
+                editForm.innerHTML = `
+                    <textarea class="form-control" rows="2">${comment.content}</textarea>
+                    <div class="d-flex justify-content-end mt-2">
+                        <button class="btn btn-sm btn-outline-danger cancel-edit">取消</button>
+                        <button class="btn btn-sm btn-danger save-edit ms-2">保存</button>
+                    </div>
+                `;
+                
+                // 替换原有内容
+                const originalContent = contentEl.innerHTML;
+                contentEl.innerHTML = '';
+                contentEl.appendChild(editForm);
+                
+                const textarea = editForm.querySelector('textarea');
+                const saveBtn = editForm.querySelector('.save-edit');
+                const cancelBtn = editForm.querySelector('.cancel-edit');
+                
+                // 绑定保存和取消事件
+                saveBtn.addEventListener('click', async () => {
+                    const newContent = textarea.value.trim();
+                    if (!newContent) return;
+                    
+                    try {
+                        const { data, error } = await supabase
+                            .from('comments')
+                            .update({ content: newContent })
+                            .eq('id', comment.id);
+                        
+                        if (error) throw error;
+                        
+                        // 更新UI
+                        contentEl.textContent = newContent;
+                        
+                        // 更新评论对象
+                        comment.content = newContent;
+                    } catch (error) {
+                        console.error('编辑评论失败:', error);
+                        alert('编辑评论失败，请重试');
+                    }
+                });
+                
+                cancelBtn.addEventListener('click', () => {
+                    contentEl.textContent = originalContent;
+                });
+                
+                textarea.focus();
+            });
+            
+            deleteBtn.addEventListener('click', async () => {
+                // 检查是否为作者或管理员
+                if (comment.author !== currentUser.name && !isAdmin) {
+                    alert('你没有权限删除此评论');
+                    return;
+                }
+                
+                if (confirm('确定要删除这条评论吗？')) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('comments')
+                            .delete()
+                            .eq('id', comment.id);
+                        
+                        if (error) throw error;
+                        
+                        // 重新加载评论
+                        await loadComments();
+                    } catch (error) {
+                        console.error('删除评论失败:', error);
+                        alert('删除评论失败，请重试');
+                    }
+                }
+            });
+            
+            container.appendChild(commentEl);
+        }
+        
+        // 处理上传媒体
+        async function handleUploadMedia() {
+            const file = mediaFile.files[0];
+            const description = mediaDescription.value.trim();
+            
+            if (!file) {
+                alert('请选择文件');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('文件大小不能超过10MB');
+                return;
+            }
+            
+            try {
+                // 上传文件到Supabase Storage
+                const { data: { path }, error: storageError } = await supabase
+                    .storage
+                    .from('media')
+                    .upload(
+                        `${Date.now()}-${file.name}`,
+                        file,
+                        { cacheControl: '3600', upsert: false }
+                    );
+                
+                if (storageError) throw storageError;
+                
+                // 获取文件URL
+                const { data: { publicUrl }, error: urlError } = supabase
+                    .storage
+                    .from('media')
+                    .getPublicUrl(path);
+                
+                if (urlError) throw urlError;
+                
+                // 保存到媒体表
+                const { data, error: dbError } = await supabase
+                    .from('media')
+                    .insert([{
+                        author: currentUser.name,
+                        content: description,
+                        url: publicUrl,
+                        type: file.type.startsWith('image/') ? 'image' : 'video'
+                    }]);
+                
+                if (dbError) throw dbError;
+                
+                // 重置表单并重新加载媒体
+                mediaFile.value = '';
+                mediaDescription.value = '';
+                uploadMediaModal.hide();
+                await loadMedia();
+            } catch (error) {
+                console.error('上传媒体失败:', error);
+                alert('上传媒体失败，请重试');
+            }
+        }
+        
+        // 加载所有媒体
+        async function loadMedia() {
+            try {
+                const { data: media, error } = await supabase
+                    .from('media')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const mediaList = document.getElementById('mediaList');
+                mediaList.innerHTML = '';
+                
+                media.forEach(item => {
+                    const mediaCard = document.createElement('div');
+                    mediaCard.className = 'col-md-4';
+                    mediaCard.innerHTML = `
+                        <div class="card h-100">
+                            <div class="media-card card-img-top" data-media-id="${item.id}" style="background-image: url('${item.url}'); background-size: cover; background-position: center;"></div>
+                            <div class="card-body">
+                                <h5 class="card-title">${item.author}</h5>
+                                <p class="card-text">${item.content || '无描述'}</p>
+                                <p class="card-text text-muted"><small>${formatDate(item.created_at)}</small></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-sm btn-outline-danger delete-media" data-media-id="${item.id}">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    mediaList.appendChild(mediaCard);
+                    
+                    // 绑定删除事件
+                    const deleteBtn = mediaCard.querySelector('.delete-media');
+                    deleteBtn.addEventListener('click', async () => {
+                        // 检查是否为作者或管理员
+                        if (item.author !== currentUser.name && !isAdmin) {
+                            alert('你没有权限删除此媒体');
+                            return;
+                        }
+                        
+                        if (confirm('确定要删除这张媒体吗？')) {
+                            try {
+                                // 删除数据库记录
+                                const { data, error } = await supabase
+                                    .from('media')
+                                    .delete()
+                                    .eq('id', item.id);
+                                
+                                if (error) throw error;
+                                
+                                // 重新加载媒体
+                                await loadMedia();
+                            } catch (error) {
+                                console.error('删除媒体失败:', error);
+                                alert('删除媒体失败，请重试');
+                            }
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('加载媒体失败:', error);
+                alert('加载媒体失败，请重试');
+            }
+        }
+        
+        // 查看媒体
+        async function viewMedia(mediaId) {
+            try {
+                const { data: media, error } = await supabase
+                    .from('media')
+                    .select('*')
+                    .eq('id', mediaId)
+                    .single();
+                
+                if (error) throw error;
+                
+                mediaViewerContent.innerHTML = '';
+                mediaViewerInfo.innerHTML = `
+                    <strong>作者：</strong>${media.author}<br>
+                    <strong>描述：</strong>${media.content || '无描述'}<br>
+                    <strong>上传时间：</strong>${formatDate(media.created_at)}
+                `;
+                
+                if (media.type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = media.url;
+                    img.className = 'media-content';
+                    mediaViewerContent.appendChild(img);
+                } else {
+                    const video = document.createElement('video');
+                    video.src = media.url;
+                    video.className = 'media-content';
+                    video.controls = true;
+                    mediaViewerContent.appendChild(video);
+                }
+                
+                mediaViewer.classList.add('active');
+            } catch (error) {
+                console.error('查看媒体失败:', error);
+                alert('查看媒体失败，请重试');
+            }
+        }
+        
+        // 处理自由发言
+        async function handleSubmitFreeTalk() {
+            const content = freeTalkContent.value.trim();
+            if (!content) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('comments')
+                    .insert([{
+                        topic_id: 'free',
+                        author: currentUser.name,
+                        content: content,
+                        level: 0
+                    }]);
+                
+                if (error) throw error;
+                
+                // 清空表单并重新加载
+                freeTalkContent.value = '';
+                await loadFreeTalks();
+            } catch (error) {
+                console.error('发布自由发言失败:', error);
+                alert('发布自由发言失败，请重试');
+            }
+        }
+        
+        // 加载自由发言
+        async function loadFreeTalks() {
+            try {
+                const { data: talks, error } = await supabase
+                    .from('comments')
+                    .select('*')
+                    .eq('topic_id', 'free')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const freeTalkList = document.getElementById('freeTalkList');
+                freeTalkList.innerHTML = '';
+                
+                talks.forEach(talk => {
+                    const talkEl = document.createElement('div');
+                    talkEl.className = 'card mb-3';
+                    talkEl.innerHTML = `
+                        <div class="card-header bg-danger text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>${talk.author}</span>
+                                <span class="text-white-50 small">${formatDate(talk.created_at)}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">${talk.content}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-sm btn-outline-danger reply-talk" data-talk-id="${talk.id}">回复</button>
+                                <button class="btn btn-sm btn-outline-danger like-talk" data-talk-id="${talk.id}">
+                                    <<i class="bi bi-heart"></</i>
+                                    <span class="like-count">${talk.like_count || 0}</span>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger edit-talk" data-talk-id="${talk.id}">编辑</button>
+                                <button class="btn btn-sm btn-outline-danger delete-talk" data-talk-id="${talk.id}">删除</button>
+                            </div>
+                            <div class="talk-replies mt-3 pl-4 border-left border-danger" data-talk-id="${talk.id}"></div>
+                        </div>
+                    `;
+                    
+                    freeTalkList.appendChild(talkEl);
+                    
+                    // 加载回复
+                    async function loadTalkReplies() {
+                        try {
+                            const { data: replies, error } = await supabase
+                                .from('comments')
+                                .select('*')
+                                .eq('parent_id', talk.id)
+                                .order('created_at', { ascending: true });
+                            
+                            if (error) throw error;
+                            
+                            const repliesContainer = talkEl.querySelector('.talk-replies');
+                            repliesContainer.innerHTML = '';
+                            
+                            replies.forEach(reply => {
+                                const replyEl = document.createElement('div');
+                                replyEl.className = 'bg-light p-2 rounded mb-2';
+                                replyEl.innerHTML = `
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <span class="fw-bold">${reply.author}</span>
+                                        <span class="text-muted small">${formatDate(reply.created_at)}</span>
+                                    </div>
+                                    <p class="mt-1">${reply.content}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-1">
+                                        <button class="btn btn-sm btn-outline-danger reply-reply" data-reply-id="${reply.id}">回复</button>
+                                        <button class="btn btn-sm btn-outline-danger like-reply" data-reply-id="${reply.id}">
+                                            <<i class="bi bi-heart"></</i>
+                                            <span class="like-count">${reply.like_count || 0}</span>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger delete-reply" data-reply-id="${reply.id}">删除</button>
+                                    </div>
+                                `;
+                                
+                                repliesContainer.appendChild(replyEl);
+                                
+                                // 回复的回复事件
+                                const replyReplyBtn = replyEl.querySelector('.reply-reply');
+                                replyReplyBtn.addEventListener('click', () => {
+                                    // 检查是否已有表单
+                                    if (replyEl.querySelector('.reply-form')) {
+                                        return;
+                                    }
+                                    
+                                    // 克隆回复表单模板
+                                    const replyForm = replyFormTemplate.content.cloneNode(true);
+                                    const textarea = replyForm.querySelector('textarea');
+                                    const saveBtn = replyForm.querySelector('.save-reply');
+                                    const cancelBtn = replyForm.querySelector('.cancel-reply');
+                                    
+                                    // 绑定保存和取消事件
+                                    saveBtn.addEventListener('click', async () => {
+                                        const content = textarea.value.trim();
+                                        if (!content) return;
+                                        
+                                        try {
+                                            const { data, error } = await supabase
+                                                .from('comments')
+                                                .insert([{
+                                                    topic_id: 'free',
+                                                    author: currentUser.name,
+                                                    content: content,
+                                                    parent_id: reply.id,
+                                                    level: reply.level + 1
+                                                }]);
+                                            
+                                            if (error) throw error;
+                                            
+                                            // 清空表单并重新加载回复
+                                            textarea.value = '';
+                                            await loadTalkReplies();
+                                        } catch (error) {
+                                            console.error('添加回复失败:', error);
+                                            alert('添加回复失败，请重试');
+                                        }
+                                    });
+                                    
+                                    cancelBtn.addEventListener('click', () => {
+                                        replyForm.remove();
+                                    });
+                                    
+                                    replyEl.appendChild(replyForm);
+                                    textarea.focus();
+                                });
+                                
+                                // 点赞事件
+                                const likeReplyBtn = replyEl.querySelector('.like-reply');
+                                likeReplyBtn.addEventListener('click', async () => {
+                                    try {
+                                        let newLikeCount = reply.like_count || 0;
+                                        let newIsLiked = !reply.is_liked;
+                                        
+                                        if (newIsLiked) {
+                                            newLikeCount += 1;
+                                        } else {
+                                            newLikeCount -= 1;
+                                        }
+                                        
+                                        const { data, error } = await supabase
+                                            .from('comments')
+                                            .update({
+                                                like_count: newLikeCount,
+                                                is_liked: newIsLiked
+                                            })
+                                            .eq('id', reply.id);
+                                        
+                                        if (error) throw error;
+                                        
+                                        // 更新UI
+                                        const likeCountEl = likeReplyBtn.querySelector('.like-count');
+                                        likeCountEl.textContent = newLikeCount;
+                                        likeReplyBtn.classList.toggle('text-danger', newIsLiked);
+                                        
+                                        // 更新回复对象
+                                        reply.like_count = newLikeCount;
+                                        reply.is_liked = newIsLiked;
+                                    } catch (error) {
+                                        console.error('点赞回复失败:', error);
+                                        alert('点赞回复失败，请重试');
+                                    }
+                                });
+                                
+                                // 删除回复事件
+                                const deleteReplyBtn = replyEl.querySelector('.delete-reply');
+                                deleteReplyBtn.addEventListener('click', async () => {
+                                    // 检查是否为作者或管理员
+                                    if (reply.author !== currentUser.name && !isAdmin) {
+                                        alert('你没有权限删除此回复');
+                                        return;
+                                    }
+                                    
+                                    if (confirm('确定要删除这条回复吗？')) {
+                                        try {
+                                            const { data, error } = await supabase
+                                                .from('comments')
+                                                .delete()
+                                                .eq('id', reply.id);
+                                            
+                                            if (error) throw error;
+                                            
+                                            // 重新加载回复
+                                            await loadTalkReplies();
+                                        } catch (error) {
+                                            console.error('删除回复失败:', error);
+                                            alert('删除回复失败，请重试');
+                                        }
+                                    }
+                                });
+                            });
+                        } catch (error) {
+                            console.error('加载回复失败:', error);
+                            alert('加载回复失败，请重试');
+                        }
+                    }
+                    
+                    // 回复事件
+                    const replyBtn = talkEl.querySelector('.reply-talk');
+                    replyBtn.addEventListener('click', () => {
+                        // 检查是否已有表单
+                        if (talkEl.querySelector('.reply-form')) {
+                            return;
+                        }
+                        
+                        // 克隆回复表单模板
+                        const replyForm = replyFormTemplate.content.cloneNode(true);
+                        const textarea = replyForm.querySelector('textarea');
+                        const saveBtn = replyForm.querySelector('.save-reply');
+                        const cancelBtn = replyForm.querySelector('.cancel-reply');
+                        
+                        // 绑定保存和取消事件
+                        saveBtn.addEventListener('click', async () => {
+                            const content = textarea.value.trim();
+                            if (!content) return;
+                            
+                            try {
+                                const { data, error } = await supabase
+                                    .from('comments')
+                                    .insert([{
+                                        topic_id: 'free',
+                                        author: currentUser.name,
+                                        content: content,
+                                        parent_id: talk.id,
+                                        level: talk.level + 1
+                                    }]);
+                                
+                                if (error) throw error;
+                                
+                                // 清空表单并重新加载回复
+                                textarea.value = '';
+                                await loadTalkReplies();
+                            } catch (error) {
+                                console.error('添加回复失败:', error);
+                                alert('添加回复失败，请重试');
+                            }
+                        });
+                        
+                        cancelBtn.addEventListener('click', () => {
+                            replyForm.remove();
+                        });
+                        
+                        talkEl.querySelector('.card-body').appendChild(replyForm);
+                        textarea.focus();
+                    });
+                    
+                    // 点赞事件
+                    const likeBtn = talkEl.querySelector('.like-talk');
+                    likeBtn.addEventListener('click', async () => {
+                        try {
+                            let newLikeCount = talk.like_count || 0;
+                            let newIsLiked = !talk.is_liked;
+                            
+                            if (newIsLiked) {
+                                newLikeCount += 1;
+                            } else {
+                                newLikeCount -= 1;
+                            }
+                            
+                            const { data, error } = await supabase
+                                .from('comments')
+                                .update({
+                                    like_count: newLikeCount,
+                                    is_liked: newIsLiked
+                                })
+                                .eq('id', talk.id);
+                            
+                            if (error) throw error;
+                            
+                            // 更新UI
+                            const likeCountEl = likeBtn.querySelector('.like-count');
+                            likeCountEl.textContent = newLikeCount;
+                            likeBtn.classList.toggle('text-danger', newIsLiked);
+                            
+                            // 更新话题对象
+                            talk.like_count = newLikeCount;
+                            talk.is_liked = newIsLiked;
+                        } catch (error) {
+                            console.error('点赞失败:', error);
+                            alert('点赞失败，请重试');
+                        }
+                    });
+                    
+                    // 编辑事件
+                    const editBtn = talkEl.querySelector('.edit-talk');
+                    editBtn.addEventListener('click', async () => {
+                        // 检查是否为作者或管理员
+                        if (talk.author !== currentUser.name && !isAdmin) {
+                            alert('你没有权限编辑此发言');
+                            return;
+                        }
+                        
+                        // 创建编辑表单
+                        const editForm = document.createElement('div');
+                        editForm.className = 'edit-form mb-2';
+                        editForm.innerHTML = `
+                            <textarea class="form-control" rows="2">${talk.content}</textarea>
+                            <div class="d-flex justify-content-end mt-2">
+                                <button class="btn btn-sm btn-outline-danger cancel-edit">取消</button>
+                                <button class="btn btn-sm btn-danger save-edit ms-2">保存</button>
+                            </div>
+                        `;
+                        
+                        // 替换原有内容
+                        const cardBody = talkEl.querySelector('.card-body');
+                        const originalContent = cardBody.innerHTML;
+                        cardBody.innerHTML = '';
+                        cardBody.appendChild(editForm);
+                        
+                        const textarea = editForm.querySelector('textarea');
+                        const saveBtn = editForm.querySelector('.save-edit');
+                        const cancelBtn = editForm.querySelector('.cancel-edit');
+                        
+                        // 绑定保存和取消事件
+                        saveBtn.addEventListener('click', async () => {
+                            const newContent = textarea.value.trim();
+                            if (!newContent) return;
+                            
+                            try {
+                                const { data, error } = await supabase
+                                    .from('comments')
+                                    .update({ content: newContent })
+                                    .eq('id', talk.id);
+                                
+                                if (error) throw error;
+                                
+                                // 更新UI
+                                cardBody.innerHTML = originalContent;
+                                cardBody.querySelector('.card-text').textContent = newContent;
+                                
+                                // 更新话题对象
+                                talk.content = newContent;
+                            } catch (error) {
+                                console.error('编辑发言失败:', error);
+                                alert('编辑发言失败，请重试');
+                            }
+                        });
+                        
+                        cancelBtn.addEventListener('click', () => {
+                            cardBody.innerHTML = originalContent;
+                        });
+                        
+                        textarea.focus();
+                    });
+                    
+                    // 删除事件
+                    const deleteBtn = talkEl.querySelector('.delete-talk');
+                    deleteBtn.addEventListener('click', async () => {
+                        // 检查是否为作者或管理员
+                        if (talk.author !== currentUser.name && !isAdmin) {
+                            alert('你没有权限删除此发言');
+                            return;
+                        }
+                        
+                        if (confirm('确定要删除这条发言吗？')) {
+                            try {
+                                const { data, error } = await supabase
+                                    .from('comments')
+                                    .delete()
+                                    .eq('id', talk.id);
+                                
+                                if (error) throw error;
+                                
+                                // 重新加载自由发言
+                                await loadFreeTalks();
+                            } catch (error) {
+                                console.error('删除发言失败:', error);
+                                alert('删除发言失败，请重试');
+                            }
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('加载自由发言失败:', error);
+                alert('加载自由发言失败，请重试');
+            }
+        }
+        
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+    </script>
+</body>
+</html>
